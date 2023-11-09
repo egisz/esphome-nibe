@@ -25,6 +25,8 @@ jobs:
       matrix: ${{ fromJson(needs.setup.outputs.mymatrix) }}
     steps:
       - run: echo ${{matrix.target}}
+      - name: "Checkout"
+        uses: actions/checkout@v3
       - name: "Patch config to test local component"
         run: |
           sed -i 's/!secret.*/Dummy123/g' ${{matrix.target}}
