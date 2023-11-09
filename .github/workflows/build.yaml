@@ -17,6 +17,7 @@ jobs:
         run: |
           sed -i 's/!secret.*/Dummy123/g' examples/lilygo-t-can485.yaml
           sed -i 's/source:.*/source: ..\/components/g' examples/lilygo-t-can485.yaml
+          cat examples/lilygo-t-can485.yaml
       - name: "Build"
         uses: esphome/build-action@v1.8.0
         id: esphome-build-esp32
