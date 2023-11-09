@@ -1,0 +1,25 @@
+name: Build ESPHome firmware
+
+# Controls when the action will run. Triggers the workflow on push
+on: 
+  push:
+  pull_request:
+  release:
+        
+jobs:
+  build:
+    runs-on: ubuntu-latest 
+    name: "Build"
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - name: "Patch config to test on esp8266"
+        run: |
+          sed -i 's/!secret.*/Dummy123/g' examples/lilygo-t-can485.yaml
+          sed -i 's/source:.*/source: ..\/components/g' examples/lilygo-t-can485.yaml
+      - name: "Build"
+        uses: esphome/build-action@v1.8.0
+        id: esphome-build-esp32
+        with:
+          yaml_file: examples/lilygo-t-can485.yaml
+  
