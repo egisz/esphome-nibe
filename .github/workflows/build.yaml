@@ -30,6 +30,8 @@ jobs:
       - name: "Patch config to test local component"
         run: |
           sed -i 's/!secret.*/Dummy123/g' ${{matrix.target}}
+          sed -i 's/type: git/type: local/g' ${{matrix.target}}
+          sed -i 's/url: https:\/\/github.*/path: ..\/components/g' ${{matrix.target}}
           sed -i 's/source: github.*/source: ..\/components/g' ${{matrix.target}}
           cat ${{matrix.target}}
       - name: "Build"
