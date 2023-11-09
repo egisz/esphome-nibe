@@ -27,11 +27,11 @@ jobs:
       - run: echo ${{matrix.target}}
       - name: "Patch config to test local component"
         run: |
-          sed -i 's/!secret.*/Dummy123/g' examples/${{matrix.target}}
-          sed -i 's/source: github.*/source: ..\/components/g' examples/${{matrix.target}}
-          cat examples/${{matrix.target}}
+          sed -i 's/!secret.*/Dummy123/g' ${{matrix.target}}
+          sed -i 's/source: github.*/source: ..\/components/g' ${{matrix.target}}
+          cat ${{matrix.target}}
       - name: "Build"
         uses: esphome/build-action@v1.8.0
         id: esphome-build-esp32
         with:
-          yaml_file: examples/${{matrix.target}}
+          yaml_file: ${{matrix.target}}
