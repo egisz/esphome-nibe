@@ -7,20 +7,31 @@ on:
   release:
         
 jobs:
-  build:
-    runs-on: ubuntu-latest 
-    name: "Build"
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      mymatrix: ${{ steps.dataStep.outputs.myoutput }}
     steps:
       - name: "Checkout"
         uses: actions/checkout@v3
+      - id: dataStep
+        run: |
+          TARGETS=$(ls examples/*.yaml | jq -R -s -c 'split("\n")[:-1]')
+          echo "myoutput=$(jq -cn --argjson environments $TARGETS '{target: $environments}')" >> $GITHUB_OUTPUT
+  run-matrix:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.setup.outputs.mymatrix) }}
+    steps:
+      - run: echo ${{matrix.target}}
       - name: "Patch config to test local component"
         run: |
-          sed -i 's/!secret.*/Dummy123/g' examples/lilygo-t-can485.yaml
-          sed -i 's/source: github.*/source: ..\/components/g' examples/lilygo-t-can485.yaml
-          cat examples/lilygo-t-can485.yaml
+          sed -i 's/!secret.*/Dummy123/g' examples/${{matrix.target}}
+          sed -i 's/source: github.*/source: ..\/components/g' examples/${{matrix.target}}
+          cat examples/${{matrix.target}}
       - name: "Build"
         uses: esphome/build-action@v1.8.0
         id: esphome-build-esp32
         with:
-          yaml_file: examples/lilygo-t-can485.yaml
-  
+          yaml_file: examples/${{matrix.target}}
